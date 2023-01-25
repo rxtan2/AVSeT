@@ -1,14 +1,14 @@
-# Sound-of-Pixels
-Codebase for ECCV18 "The Sound of Pixels".
+# Audio Visual Separation through Text (AVSeT)
+Codebase for submission"Language-Guided Audio-Visual Source Separation via Trimodal Consistency".
 
-*This repository is under construction, but the core parts are already there.
+*We are still setting up the code repository but the key code pieces are in there.
 
 <img src="./teaser.png"/>
 
 ## Environment
 The code is developed under the following configurations.
 - Hardware: 1-4 GPUs (change ```[--num_gpus NUM_GPUS]``` accordingly)
-- Software: Ubuntu 16.04.3 LTS, ***CUDA>=8.0, Python>=3.5, PyTorch>=0.4.0***
+- Software: Ubuntu 16.04.3 LTS, ***CUDA>=10.3, Python>=3.5, PyTorch>=1.9.0***
 
 ## Training
 1. Prepare video dataset.
@@ -72,16 +72,4 @@ The code is developed under the following configurations.
 1. Evaluate the trained model performance.
 ```bash
 ./scripts/eval_MUSIC.sh
-```
-
-## Reference
-If you use the code or dataset from the project, please cite:
-```bibtex
-    @InProceedings{Zhao_2018_ECCV,
-        author = {Zhao, Hang and Gan, Chuang and Rouditchenko, Andrew and Vondrick, Carl and McDermott, Josh and Torralba, Antonio},
-        title = {The Sound of Pixels},
-        booktitle = {The European Conference on Computer Vision (ECCV)},
-        month = {September},
-        year = {2018}
-    }
 ```
