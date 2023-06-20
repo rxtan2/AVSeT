@@ -58,7 +58,7 @@ The code is developed under the following configurations.
 
 3. Train the default model.
 ```bash
-./scripts/train_MUSIC.sh
+./scripts/train_bimodal_cyclic_losses_solos_scc.sh
 ```
 
 5. During training, visualizations are saved in HTML format under ```ckpt/MODEL_ID/visualization/```.
