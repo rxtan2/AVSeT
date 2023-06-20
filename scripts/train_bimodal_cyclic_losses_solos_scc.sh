@@ -8,7 +8,7 @@
 #$ -l gpus=1
 #$ -pe omp 3
 #$ -l gpu_memory=48G
-w
+
 module load python3/3.8.10
 module load pytorch/1.9.0
 module load cuda/11.1
@@ -23,11 +23,6 @@ OPTS+="--ckpt ./ckpt/solos_dataset_experiments/bimodal_cyclic_losses_latent/comb
 OPTS+="--log_path ./logs/solos_dataset_experiments/bimodal_cyclic_losses_latent/combined_textproj_clip_res50_orig_dim_maxpool_sound_pixels_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_textmask_weight_%s_visualmask_weight_%s_frozen_resnet.txt "
 OPTS+="--tensorboard_path ./tensorboard_plots/solos_dataset_experiments/bimodal_cyclic_losses_latent/combined_textproj_clip_res50_orig_dim_maxpool_sound_pixels_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_textmask_weight_%s_visualmask_weight_%s_frozen_resnet "
 
-#OPTS+="--ckpt ./ckpt/solos_dataset_experiments/bimodal_cyclic_losses_latent/adam_combined_textproj_clip_res50_orig_dim_maxpool_sound_pixels_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_textmask_weight_%s_visualmask_weight_%s_frozen_resnet "
-#OPTS+="--log_path ./logs/solos_dataset_experiments/bimodal_cyclic_losses_latent/adam_combined_textproj_clip_res50_orig_dim_maxpool_sound_pixels_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_textmask_weight_%s_visualmask_weight_%s_frozen_resnet.txt "
-#OPTS+="--tensorboard_path ./tensorboard_plots/solos_dataset_experiments/bimodal_cyclic_losses_latent/adam_combined_textproj_clip_res50_orig_dim_maxpool_sound_pixels_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_textmask_weight_%s_visualmask_weight_%s_frozen_resnet "
-
-# Models
 OPTS+="--arch_sound distill-bimodal-audiovisual7layerunet "
 OPTS+="--arch_synthesizer linear "
 OPTS+="--arch_frame clip-res50-distill-attn-textproj-normalize-scale-maxpool-framewise-combined "
@@ -51,9 +46,9 @@ OPTS+="--frameRate 8 "
 OPTS+="--audLen 65535 "
 OPTS+="--audRate 11025 "
 
-OPTS+="--num_gpus 1 "
-OPTS+="--workers 3 "
-OPTS+="--batch_size_per_gpu 20 "
+OPTS+="--num_gpus 8 "
+OPTS+="--workers 2 "
+OPTS+="--batch_size_per_gpu 4 "
 
 # use latent concepts
 OPTS+="--use_latent_concepts True "
