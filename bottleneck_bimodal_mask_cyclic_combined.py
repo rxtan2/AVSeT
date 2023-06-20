@@ -115,7 +115,11 @@ class NetWrapper(torch.nn.Module):
         
         # 4. loss
         err = self.crit(pred_masks, gt_masks, weight).reshape(1)
-        text_err = self.crit(text_pred_masks, gt_masks, weight).reshape(1)
+
+        if args.compute_text_separation_loss:
+            text_err = self.crit(text_pred_masks, gt_masks, weight).reshape(1)
+        else:
+            text_err = None
         
         # Encodes predicted audio spectrograms
         first_pred_audio_feats = self.net_sound.encode_audio_spec(log_mag_mix, pred_masks[0])
@@ -136,8 +140,11 @@ class NetWrapper(torch.nn.Module):
         kldiv_loss = F.kl_div(audio_attn, text_attn) 
         
         # Compute final loss
-        final_loss = (self.visual_mask_pred_loss_weight * err) + (self.text_mask_pred_loss_weight * text_err) + (self.kl_loss_weight * kldiv_loss) + (self.textclass_loss_weight * textclass_loss)
-        
+        final_loss = (self.visual_mask_pred_loss_weight * err) + (self.kl_loss_weight * kldiv_loss) + (self.textclass_loss_weight * textclass_loss)
+
+        if args.compute_text_separation_loss:
+            final_loss = final_loss + (self.text_mask_pred_loss_weight * text_err)
+            
         return final_loss, err, text_err, kldiv_loss, textclass_loss, \
             {'pred_masks': pred_masks, 'gt_masks': gt_masks,
              'mag_mix': mag_mix, 'mags': mags, 'weight': weight, 'attn_scores': attn_scores, 'text_pred_masks': text_pred_masks}
