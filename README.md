@@ -73,3 +73,6 @@ The code is developed under the following configurations.
 ```bash
 ./scripts/eval_MUSIC.sh
 ```
+
+## Updates
+We have observed that finetuning the separation model with the latent captions with a very low learning rate further helps to improve performance. More details will come soon. 
