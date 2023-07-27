@@ -1,8 +1,6 @@
 # Video-Audio Separation through Text (VAST)
 Codebase for submission"Language-Guided Audio-Visual Source Separation via Trimodal Consistency".
 
-*We are still setting up the code repository but the key code pieces are in there.
-
 <img src="./teaser.png"/>
 
 ## Environment
