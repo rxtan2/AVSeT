@@ -28,8 +28,7 @@ OPTS+="--tensorboard_path ./tensorboard_plots/solos_dataset_experiments/all_cycl
 #OPTS+="--tensorboard_path ./tensorboard_plots/solos_dataset_experiments/all_cyclic_losses_latent/adam_combined_textproj_clip_res50_orig_dim_maxpool_sound_pixels_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_visualmask_weight_%s_frozen_resnet "
 
 # Models
-#OPTS+="--arch_sound distill-audiovisual7layerunet-mlp "
-OPTS+="--arch_sound distill-audiovisual7layerunet "
+#OPTS+="--arch_sound unet7 "
 OPTS+="--arch_synthesizer linear "
 OPTS+="--arch_frame clip-res50-distill-attn-textproj-normalize-scale-maxpool-framewise-combined "
 
@@ -52,9 +51,9 @@ OPTS+="--frameRate 8 "
 OPTS+="--audLen 65535 "
 OPTS+="--audRate 11025 "
 
-OPTS+="--num_gpus 1 "
+OPTS+="--num_gpus 8 "
 OPTS+="--workers 3 "
-OPTS+="--batch_size_per_gpu 20 "
+OPTS+="--batch_size_per_gpu 5 "
 
 # use latent concepts
 OPTS+="--use_latent_concepts True "
