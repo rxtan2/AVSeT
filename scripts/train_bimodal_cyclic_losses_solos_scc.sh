@@ -23,9 +23,9 @@ OPTS+="--ckpt ./ckpt/solos_dataset_experiments/bimodal_cyclic_losses_latent/comb
 OPTS+="--log_path ./logs/solos_dataset_experiments/bimodal_cyclic_losses_latent/combined_textproj_clip_res50_orig_dim_maxpool_sound_pixels_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_textmask_weight_%s_visualmask_weight_%s_frozen_resnet.txt "
 OPTS+="--tensorboard_path ./tensorboard_plots/solos_dataset_experiments/bimodal_cyclic_losses_latent/combined_textproj_clip_res50_orig_dim_maxpool_sound_pixels_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_textmask_weight_%s_visualmask_weight_%s_frozen_resnet "
 
-OPTS+="--arch_sound distill-bimodal-audiovisual7layerunet "
+OPTS+="--arch_sound unet7 "
 OPTS+="--arch_synthesizer linear "
-OPTS+="--arch_frame clip-res50-distill-attn-textproj-normalize-scale-maxpool-framewise-combined "
+OPTS+="--arch_frame clip-res50-distill-attn-textproj-normalize-scale-maxpool-framewise "
 
 OPTS+="--img_pool maxpool "
 OPTS+="--num_channels 32 "
