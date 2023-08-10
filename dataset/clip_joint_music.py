@@ -102,13 +102,6 @@ class ClipJointMUSICMixDataset(BaseDataset):
             for idx, vid in enumerate(tmp):
                 self.vid2latent_idx[vid] = idx
         
-    def get_center(self, bbox):
-        center_x = ((bbox[2] - bbox[0]) // 2) + bbox[0]
-        center_y = ((bbox[3] - bbox[1]) // 2) + bbox[1]
-        center_x = int(center_x / (16 * (384 / 224)))
-        center_y = int(center_y / (16 * (384 / 224)))
-        return center_x, center_y
-        
     def _load_clip_frames(self, paths):
         frames = []
         for path in paths:
@@ -239,19 +232,7 @@ class ClipJointMUSICMixDataset(BaseDataset):
                     bbox = self.bbox_anns[tmp]
                 else:
                     bbox = [[0, 0, 0, 0], None]    
-                 
-                first_box = bbox[0]
-                second_box = bbox[1]  
-                first_center_x, first_center_y = self.get_center(first_box)
-                if second_box is not None:
-                    second_present = True
-                    second_center_x, second_center_y = self.get_center(second_box)
-                else:
-                    second_present = False
-                    second_center_x = 0
-                    second_center_y = 0
-                bbox_centers[n] = torch.Tensor([[first_center_x, first_center_y], [second_center_x, second_center_y]])
-                
+                                 
                 clip_names[n] = tmp
                 frames[n] = self._load_clip_frames(path_frames[n])
                 
@@ -269,7 +250,7 @@ class ClipJointMUSICMixDataset(BaseDataset):
         if self.use_latent_concepts:
             first_latent_idx = latent_pair_idx[0]
             second_latent_idx = latent_pair_idx[1]
-            ret_dict = {'mag_mix': mag_mix, 'text': text, 'frames': frames, 'mags': mags, 'clip_names': clip_names, 'bbox_centers': bbox_centers, 'path_frames': path_frames, 'first_cat_idx': first_latent_idx, 'second_cat_idx': second_latent_idx}
+            ret_dict = {'mag_mix': mag_mix, 'text': text, 'frames': frames, 'mags': mags, 'clip_names': clip_names, 'path_frames': path_frames, 'first_cat_idx': first_latent_idx, 'second_cat_idx': second_latent_idx}
             
             if self.split != 'train':
                 ret_dict['audios'] = audios
@@ -278,7 +259,7 @@ class ClipJointMUSICMixDataset(BaseDataset):
 
             return ret_dict
 
-        ret_dict = {'mag_mix': mag_mix, 'text': text, 'frames': frames, 'mags': mags, 'clip_names': clip_names, 'bbox_centers': bbox_centers, 'path_frames': path_frames}
+        ret_dict = {'mag_mix': mag_mix, 'text': text, 'frames': frames, 'mags': mags, 'clip_names': clip_names, 'path_frames': path_frames}
         if self.split != 'train':
             ret_dict['audios'] = audios
             ret_dict['phase_mix'] = phase_mix
