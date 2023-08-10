@@ -66,30 +66,6 @@ class ClipJointMUSICMixDataset(BaseDataset):
         transform_list.append(vtransforms.Normalize(mean, std))
         transform_list.append(vtransforms.Stack())
         self.preprocess = transforms.Compose(transform_list)          
-
-        if self.mode == 'curated_eval':
-            self.curated_pairs = pickle.load(open('./data/curated_clean_zero_shot_eval_pairs.pkl', 'rb'))
-            self.curated_vid2idx = pickle.load(open('./data/curated_clean_zero_shot_unseen_vid2idx.pkl', 'rb'))
-        
-        self.bbox_anns = pickle.load(open('./gradcam_box_annotations/albef_all_boxes.pkl', 'rb'))
-        
-        if 'vitb32' not in opt.arch_frame:
-            if 'prompt' in opt.arch_frame:
-                self.precomputed_text_features = np.load('./precomputed_features/prompt_clip_rn50_text_category_features.npy')
-                tmp = pickle.load(open('./precomputed_features/prompt_text_category_order_rn50.pkl', 'rb'))
-            else:
-                self.precomputed_text_features = np.load('./precomputed_features/clip_text_category_features.npy')
-                tmp = pickle.load(open('./precomputed_features/text_category_order.pkl', 'rb'))
-        else:
-            if 'prompt' in opt.arch_frame:
-                self.precomputed_text_features = np.load('./precomputed_features/prompt_clip_vitb32_text_category_features.npy')
-                tmp = pickle.load(open('./precomputed_features/prompt_text_category_order_vitb32.pkl', 'rb'))
-            else:
-                self.precomputed_text_features = np.load('./precomputed_features/clip_vitb32_text_category_features.npy')
-                tmp = pickle.load(open('./precomputed_features/text_category_order_vitb32.pkl', 'rb'))
-                
-        #self.precomputed_text_features = np.load('./precomputed_features/unseen_instruments_clip_rn50_text_category_features.npy')
-        #tmp = pickle.load(open('./precomputed_features/unseen_instruments__text_category_order_rn50.pkl', 'rb'))
         
         self.cat2text_feat_idx = {}
         for idx, cat in enumerate(tmp):
