@@ -1,23 +1,7 @@
-#!/bin/bash -l
-#$ -P ivc-ml
-#$ -l h_rt=48:00:00
-#$ -m bea
-#$ -N bimodal_cyclic
-#$ -j y
-#$ -o output_$JOB_ID.out
-#$ -l gpus=1
-#$ -pe omp 3
-#$ -l gpu_memory=48G
-
-module load python3/3.8.10
-module load pytorch/1.9.0
-module load cuda/11.1
-source /projectnb/ivc-ml/rxtan/virtual_environments/object_detection/bin/activate
-
 OPTS=""
 OPTS+="--id MUSIC "
-OPTS+="--list_train data/solos_train_5.csv "
-OPTS+="--list_val data/solos_val_5.csv "
+OPTS+="--list_train data/music_train.csv "
+OPTS+="--list_val data/music_val.csv "
 
 OPTS+="--ckpt ./ckpt/model_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_textmask_weight_%s_visualmask_weight_%s_frozen_resnet "
 OPTS+="--log_path ./logs/model_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_textmask_weight_%s_visualmask_weight_%s_frozen_resnet.txt "
@@ -61,7 +45,7 @@ OPTS+="--visual_mask_pred_loss_weight 1.0 "
 
 OPTS+="--optimizer sgd "
 OPTS+="--lr_frame_base -1.0 "
-OPTS+="--lr_sound 1e-3 "
+OPTS+="--lr_sound 5e-3 "
 OPTS+="--lr_synthesizer 1e-3 "
 OPTS+="--num_epoch 100 "
 OPTS+="--lr_steps 80 "
