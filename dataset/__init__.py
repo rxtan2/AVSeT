@@ -2,7 +2,6 @@ from .music import *
 from .clip_visual_music import *
 from .clip_joint_music import *
 from .clip_single_music import *
-from .solos_music import *
 from .clip_joint_solos import *
 from .clip_visual_solos import *
 from .clip_attn_solos import *
