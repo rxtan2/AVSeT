@@ -56,13 +56,13 @@ The code is developed under the following configurations.
 
 3. Train the default model.
 ```bash
-./scripts/train_bimodal_cyclic_losses_solos_scc.sh
+./scripts/train_bimodal_cyclic_losses_solos_music.sh
 ```
 
 5. During training, visualizations are saved in HTML format under ```ckpt/MODEL_ID/visualization/```.
 
 ## Evaluation
-0. (Optional) Download our trained model [weights]() for evaluation.
+0. (Optional) Download our trained model [weights](https://drive.google.com/file/d/11GclDxsyEAaQOHO9atf9ZWcmrwGu6Gnt/view?usp=drive_link) for evaluation.
 
 ## Updates
 We have observed that finetuning the separation model with the latent captions with a very low learning rate further helps to improve performance. More details will come soon. 
