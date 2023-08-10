@@ -19,9 +19,9 @@ OPTS+="--id MUSIC "
 OPTS+="--list_train data/solos_train_5.csv "
 OPTS+="--list_val data/solos_val_5.csv "
 
-OPTS+="--ckpt ./ckpt/solos_dataset_experiments/bimodal_cyclic_losses_latent/combined_textproj_clip_res50_orig_dim_maxpool_sound_pixels_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_textmask_weight_%s_visualmask_weight_%s_frozen_resnet "
-OPTS+="--log_path ./logs/solos_dataset_experiments/bimodal_cyclic_losses_latent/combined_textproj_clip_res50_orig_dim_maxpool_sound_pixels_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_textmask_weight_%s_visualmask_weight_%s_frozen_resnet.txt "
-OPTS+="--tensorboard_path ./tensorboard_plots/solos_dataset_experiments/bimodal_cyclic_losses_latent/combined_textproj_clip_res50_orig_dim_maxpool_sound_pixels_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_textmask_weight_%s_visualmask_weight_%s_frozen_resnet "
+OPTS+="--ckpt ./ckpt/model_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_textmask_weight_%s_visualmask_weight_%s_frozen_resnet "
+OPTS+="--log_path ./logs/model_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_textmask_weight_%s_visualmask_weight_%s_frozen_resnet.txt "
+OPTS+="--tensorboard_path ./tensorboard_plots/model_bs_%s_audio_lr_%s_vis_lr_%s_kldiv_weight_%s_textclass_weight_%s_textmask_weight_%s_visualmask_weight_%s_frozen_resnet "
 
 OPTS+="--arch_sound unet7 "
 OPTS+="--arch_synthesizer linear "
@@ -52,7 +52,7 @@ OPTS+="--batch_size_per_gpu 4 "
 
 # use latent concepts
 OPTS+="--use_latent_concepts True "
-OPTS+="--latent_concept_path ./precomputed_features/latent_features/solos_3_latent_concept_sgd_epoch_10000_lr_10.0_model.npy "
+OPTS+="--latent_concept_path /path/to/extracted latent embeddings "
 
 OPTS+="--kl_loss_weight 1e-3 "
 OPTS+="--textclass_loss_weight 1e-3 "
@@ -61,7 +61,7 @@ OPTS+="--visual_mask_pred_loss_weight 1.0 "
 
 OPTS+="--optimizer sgd "
 OPTS+="--lr_frame_base -1.0 "
-OPTS+="--lr_sound 5e-3 "
+OPTS+="--lr_sound 1e-3 "
 OPTS+="--lr_synthesizer 1e-3 "
 OPTS+="--num_epoch 100 "
 OPTS+="--lr_steps 80 "
