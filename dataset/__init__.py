@@ -2,7 +2,6 @@ from .music import *
 from .clip_visual_music import *
 from .clip_text_music import *
 from .clip_joint_music import *
-from .clip_joint_position_music import *
 from .clip_single_music import *
 from .imagenet_vit_music import *
 from .imagenet_vis_clip_text_music import *
