@@ -1,5 +1,4 @@
 from .music import *
-from .language_music import *
 from .clip_visual_music import *
 from .clip_text_music import *
 from .clip_joint_music import *
@@ -9,7 +8,6 @@ from .imagenet_vit_music import *
 from .imagenet_vis_clip_text_music import *
 from .solos_music import *
 from .clip_text_solos import *
-from .language_solos import *
 from .clip_joint_solos import *
 from .clip_visual_solos import *
 from .clip_attn_solos import *
