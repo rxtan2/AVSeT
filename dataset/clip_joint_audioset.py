@@ -67,11 +67,6 @@ class ClipJointAudioSetMixDataset(BaseDataset):
         transform_list.append(vtransforms.Stack())
         self.preprocess = transforms.Compose(transform_list)          
         
-        self.bbox_anns = pickle.load(open('./gradcam_box_annotations/albef_all_boxes.pkl', 'rb'))
-                
-        self.precomputed_text_features = np.load('./precomputed_features/audioset_clip_rn50_text_category_features.npy')
-        tmp = pickle.load(open('./precomputed_features/audioset_text_category_order_rn50.pkl', 'rb'))
-        
         self.vid2ann = pickle.load(open("./combined_video2ann_times.pkl", "rb"))
         
         self.cat2text_feat_idx = {}
@@ -92,13 +87,6 @@ class ClipJointAudioSetMixDataset(BaseDataset):
             self.vid2latent_idx = {}
             for idx, vid in enumerate(tmp):
                 self.vid2latent_idx[vid] = idx
-        
-    def get_center(self, bbox):
-        center_x = ((bbox[2] - bbox[0]) // 2) + bbox[0]
-        center_y = ((bbox[3] - bbox[1]) // 2) + bbox[1]
-        center_x = int(center_x / (16 * (384 / 224)))
-        center_y = int(center_y / (16 * (384 / 224)))
-        return center_x, center_y
         
     def _load_clip_frames(self, paths):
         frames = []
@@ -231,25 +219,7 @@ class ClipJointAudioSetMixDataset(BaseDataset):
                 else:
                     text_feat = self.precomputed_text_features[cat_idx]
                 text[n] = text_feat
-                
-                # gets albef-computed bounding boxes
-                if tmp in self.bbox_anns:
-                    bbox = self.bbox_anns[tmp]
-                else:
-                    bbox = [[0, 0, 0, 0], None]    
-                 
-                first_box = bbox[0]
-                second_box = bbox[1]  
-                first_center_x, first_center_y = self.get_center(first_box)
-                if second_box is not None:
-                    second_present = True
-                    second_center_x, second_center_y = self.get_center(second_box)
-                else:
-                    second_present = False
-                    second_center_x = 0
-                    second_center_y = 0
-                bbox_centers[n] = torch.Tensor([[first_center_x, first_center_y], [second_center_x, second_center_y]])
-                
+            
                 clip_names[n] = tmp
                 frames[n] = self._load_clip_frames(path_frames[n])
                 
@@ -280,7 +250,7 @@ class ClipJointAudioSetMixDataset(BaseDataset):
             first_latent_idx = latent_pair_idx[0]
             second_latent_idx = latent_pair_idx[1]
             
-            ret_dict = {'mag_mix': mag_mix, 'text': text, 'frames': frames, 'mags': mags, 'clip_names': clip_names, 'bbox_centers': bbox_centers, 'path_frames': path_frames, 'first_cat_idx': first_latent_idx, 'second_cat_idx': second_latent_idx}
+            ret_dict = {'mag_mix': mag_mix, 'text': text, 'frames': frames, 'mags': mags, 'clip_names': clip_names, 'path_frames': path_frames, 'first_cat_idx': first_latent_idx, 'second_cat_idx': second_latent_idx}
             
             if self.split != 'train':
                 ret_dict['audios'] = audios
@@ -288,7 +258,7 @@ class ClipJointAudioSetMixDataset(BaseDataset):
                 ret_dict['infos'] = infos
             return ret_dict
 
-        ret_dict = {'mag_mix': mag_mix, 'text': text, 'frames': frames, 'mags': mags, 'clip_names': clip_names, 'bbox_centers': bbox_centers, 'path_frames': path_frames, 'first_cat_idx': first_cat_idx, 'second_cat_idx': second_cat_idx}
+        ret_dict = {'mag_mix': mag_mix, 'text': text, 'frames': frames, 'mags': mags, 'clip_names': clip_names, 'path_frames': path_frames, 'first_cat_idx': first_cat_idx, 'second_cat_idx': second_cat_idx}
         if self.split != 'train':
             ret_dict['audios'] = audios
             ret_dict['phase_mix'] = phase_mix
