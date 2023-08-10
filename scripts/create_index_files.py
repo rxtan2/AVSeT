@@ -16,9 +16,9 @@ def find_recursive(root_dir, ext='.mp3'):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--root_audio', default='./data/new_audio',
+    parser.add_argument('--root_audio', default='./data/audio',
                         help="root for extracted audio files")
-    parser.add_argument('--root_frame', default='./data/new_frames',
+    parser.add_argument('--root_frame', default='./data/frames',
                         help="root for extracted video frames")
     parser.add_argument('--fps', default=8, type=int,
                         help="fps of video frames")
@@ -26,9 +26,11 @@ if __name__ == '__main__':
                         help="path to output index files")
     parser.add_argument('--trainset_ratio', default=0.8, type=float,
                         help="80% for training, 20% for validation")
+    parser.add_argument('--json_files', default='MUSIC_solo_videos.json', type=str,
+                        help="path to input json file")
     args = parser.parse_args()
     
-    json_files = ["/research/rxtan/object-detection/datasets/MUSIC_dataset/MUSIC_solo_videos.json", "/research/rxtan/object-detection/datasets/MUSIC_dataset/MUSIC_duet_videos.json", ]
+    json_files = [args.json_files]
     
     vid2cat = {}
     cat2vids = {}
