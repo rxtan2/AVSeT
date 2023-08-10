@@ -14,10 +14,6 @@ from .clip_joint_solos import *
 from .clip_visual_solos import *
 from .clip_attn_solos import *
 from .clip_pos_attn_solos import *
-from .unseen_bottleneck_sop import *
-from .unseen_bottleneck_clip_text import *
-from .unseen_bottleneck_clip_visual import *
-from .unseen_bottleneck_clip_joint import *
 from .clip_latent_dataset import *
 from .latent_attn_solos import *
 from .clip_joint_audioset import *
