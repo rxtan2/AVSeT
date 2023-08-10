@@ -32,19 +32,21 @@ from dataset import LatentCodeDataset
 from torch.utils.tensorboard import SummaryWriter
 
 parser = argparse.ArgumentParser(description='Model to extract latent code representations')
-parser.add_argument('--batch_size', type=int, default=58, metavar='N',
-                    help='input batch size for training (default: 64)')
+parser.add_argument('--batch_size', type=int, default=16, metavar='N',
+                    help='input batch size for optimization (default: 16)')
 parser.add_argument('--workers', type=int, default=5, metavar='N',
                     help='number of worker threads')
 parser.add_argument('--epochs', type=int, default=5000, metavar='N',
-                    help='Number of training epochs (default: 20)')
+                    help='Number of training epochs (default: 5000)')
 parser.add_argument('--warmup_steps', type=int, default=1000, metavar='N',
                     help='Number of warmup steps')
-parser.add_argument('--num_learnable_embeddings', type=int, default=3, metavar='NE',
+parser.add_argument('--num_learnable_embeddings', type=int, default=75, metavar='NE',
                     help='Number of learnable embeddings for latent concepts')
 parser.add_argument('--lr', type=float, default=10., metavar='LR',
                     help='learning rate for optimizer')
-parser.add_argument('--video_dir', type=str, default="/research/rxtan/object-detection/models/Sound-of-Pixels/data/audioset_dataset_frames/", metavar='VD', help='video directory')
+parser.add_argument('--video_dir', type=str, default="./video_dataset_frames/", metavar='VD', help='video directory')
+parser.add_argument('--output_latents_feature_path', type=str, default="./latent_embeds.npy", metavar='VD', help='path to save latent embeddings')
+parser.add_argument('--output_latents_order_path', type=str, default="./latent_embeds_order.pkl", metavar='VD', help='path to save order of latent embeddings')
 
 def main(args):
     dataset = LatentCodeDataset(args)
@@ -54,14 +56,7 @@ def main(args):
         shuffle=False,
         num_workers=int(args.workers),
         drop_last=False)
-        
-    '''loader = torch.utils.data.DataLoader(
-        dataset,
-        batch_size=2,
-        shuffle=False,
-        num_workers=0,
-        drop_last=False)'''
-        
+  
     model = ClipLatentModel()
     model = model.cuda()
     model.eval()
@@ -84,7 +79,6 @@ def train(args, model, loader, num_epochs, lr):
         concept_model = LatentConceptEmbedding(len(text), args.num_learnable_embeddings).cuda()
         concept_model.train()
         
-        #optimizer = torch.optim.Adam(concept_model.parameters(), lr)
         optimizer = torch.optim.SGD(concept_model.parameters(), lr)
         
         with torch.no_grad():
@@ -94,28 +88,13 @@ def train(args, model, loader, num_epochs, lr):
         initial = concept_model.latent_concept.clone().detach()
         tmp = concept_model.latent_concept.clone().detach()
         
-        #tmp = F.normalize(tmp, dim=-1)
-        #initial = F.normalize(initial, dim=-1)
-        #initial_dist = torch.cdist(initial.unsqueeze(0), tmp.unsqueeze(0))
-        #initial_dist = initial_dist * torch.eye(len(initial_dist)).cuda()
-        #initial_dist = initial_dist.sum(1)
-        
         for curr_epoch in range(num_epochs):
             optimizer.zero_grad()
             score, text_class_scores, gt_class_scores = concept_model(text, text_features, visual_features, cat_idx)
             score = score * -1.
             score.backward()
             optimizer.step()
-            
-            #print('score %s: ' % curr_epoch, score.item(), ' , ', 'text class acc: ', text_class_scores.item(), ' , ', 'gt_text_class score: ', gt_class_scores.item())
-            
-        #sys.exit()
-            
-        #final = concept_model.latent_concept.clone().detach()
-        #final = F.normalize(final, dim=-1)
-        #initial = F.normalize(initial, dim=-1)
-        #dist = torch.cdist(initial.unsqueeze(0).unsqueeze(0), final.unsqueeze(0).unsqueeze(0))
-        
+
         with torch.no_grad():
             latent_concept = concept_model.extract_latent_concept(text, text_features)
             latent_concept = latent_concept.squeeze(0).detach().cpu()
@@ -128,17 +107,8 @@ def train(args, model, loader, num_epochs, lr):
     all_latent_concepts = all_latent_concepts.numpy()
     all_frame_features = all_frame_features.numpy()
     
-    np.save('./precomputed_features/latent_features/audioset_split_5_%s_latent_concept_sgd_epoch_%s_lr_%s_model.npy' % (args.num_learnable_embeddings, args.epochs, lr), all_latent_concepts)
-    #np.save('./precomputed_features/latent_features/visual_solos_%s_latent_concept_sgd_epoch_%s_lr_%s_model.npy' % (args.num_learnable_embeddings, args.epochs, lr), all_frame_features)
-    pickle.dump(video_order, open('./precomputed_features/latent_features/audioset_split_5_%s_latent_concept_sgd_epoch_%s_lr_%s_model.pkl' % (args.num_learnable_embeddings, args.epochs, lr), 'wb'))
-    
-    #np.save('./precomputed_features/latent_features/person_template_solos_%s_latent_concept_sgd_epoch_%s_lr_%s_model.npy' % (args.num_learnable_embeddings, args.epochs, lr), all_latent_concepts)
-    #np.save('./precomputed_features/latent_features/visual_photo_person_template_solos_%s_latent_concept_sgd_epoch_%s_lr_%s_model.npy' % (args.num_learnable_embeddings, args.epochs, lr), all_frame_features)
-    #pickle.dump(video_order, open('./precomputed_features/latent_features/person_template_solos_%s_latent_concept_sgd_epoch_%s_lr_%s_model.pkl' % (args.num_learnable_embeddings, args.epochs, lr), 'wb'))
-    
-    print('all_latent_concepts: ', all_latent_concepts.shape)
-    print('video_order: ', len(video_order))
-    
+    np.save(args.output_latents_feature_path, all_latent_concepts)
+    pickle.dump(video_order, open(args.output_latents_order_path, 'wb'))  
     return
 
 if __name__ == '__main__':
