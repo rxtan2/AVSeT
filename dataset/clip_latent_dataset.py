@@ -43,10 +43,10 @@ class LatentCodeDataset():
         self.end_token_id = 49407
         self.placeholder_id = 2653
         self.context_length = 77
-        self.vid2cat = pickle.load(open("vid2cat.pkl", "rb"))
+        self.vid2cat = pickle.load(open(args.vid2cat_path), "rb"))
         self.cat2idx = {}
         
-        valid_videos = pickle.load(open('valid_videos.pkl', 'rb'))
+        valid_videos = pickle.load(open(args.valid_videos_path, 'rb'))
         
         self.video_list = []
         invalid = set()
