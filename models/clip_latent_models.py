@@ -474,8 +474,6 @@ class LatentConceptEmbedding(nn.Module):
         self.num_learnable_embeddings = num_learnable_embeddings
         self.num_regions = num_regions
         
-        tmp = torch.from_numpy(np.load("/research/rxtan/object-detection/models/Sound-of-Pixels/precomputed_features/audioset_clip_rn50_text_category_features.npy")).float()
-        
         self.text_class_embeddings = nn.Embedding(tmp.size(0), tmp.size(1))
         
         self.text_class_embeddings.weight.data.copy_(tmp)
@@ -510,19 +508,7 @@ class LatentConceptEmbedding(nn.Module):
         second = text_features[:, 1+self.num_learnable_embeddings:]
     
         ### without templated prompts ###
-        #first = text_features[:, 0].unsqueeze(1)
-        #second = text_features[:, 1+self.num_learnable_embeddings:]
         tmp = self.latent_concept[:len(text), :, :]
-        
-        # for region concepts
-        '''first = first.repeat(1, tmp.size(1), 1, 1)
-        second = second.repeat(1, tmp.size(1), 1, 1)
-        final = torch.cat((first, tmp, second), dim=1)
-        final = final.view(-1, final.size(-2), final.size(-1))
-        text = text.unsqueeze(1).repeat(1, tmp.size(1), 1)
-        text = text.view(-1, text.size(-1))
-        final_text_features = self.clip_model.encode_text(final, text)
-        final_text_features = final_text_features.view(-1, self.num_regions, final_text_features.size(-1))'''
         
         # for global frame concept
         final = torch.cat((first, tmp, second), dim=1)
@@ -544,8 +530,6 @@ class LatentConceptEmbedding(nn.Module):
         text_class_scores = torch.matmul(final_text_features, gt_text_labels.t())
         text_class_scores = text_class_scores * logit_scale
         
-        # uncomment for region concepts
-        #text_class_scores = torch.max(text_class_scores, dim=1)[0]
         gt_class_scores = text_class_scores[torch.arange(text_class_scores.shape[0]), cat_idx]
         gt_class_scores = gt_class_scores.mean()  
         
@@ -554,19 +538,13 @@ class LatentConceptEmbedding(nn.Module):
         text_class_scores = torch.mean(text_class_scores.float()) * 100.
         
         return score, text_class_scores.detach(), gt_class_scores.detach()
-        #return gt_class_scores, text_class_scores.detach(), gt_class_scores
     
 class ClipLatentModel(nn.Module):
     def __init__(self):
         super(ClipLatentModel, self).__init__()
         from functools import partial
-        pretrained_path = "/research/reuben/news_cluster_data/pretrained_clip_resnet50.pth"
-        if not os.path.exists(pretrained_path):
-            pretrained_path = "/net/ivcfs5/mnt/data/reuben/news_cluster_data/pretrained_clip_resnet50.pth"
         
-        state_dict = torch.load(pretrained_path)
-        
-        self.logit_scale = nn.Parameter(state_dict['logit_scale']) # use this for new frame ablation jobs !!!!!
+        self.logit_scale = 100. # use this for new frame ablation jobs !!!!!
         
         counts: list = [len(set(k.split(".")[2] for k in state_dict if k.startswith(f"visual.layer{b}"))) for b in [1, 2, 3, 4]]
         vision_layers = tuple(counts)
