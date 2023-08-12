@@ -43,14 +43,10 @@ class LatentCodeDataset():
         self.end_token_id = 49407
         self.placeholder_id = 2653
         self.context_length = 77
-        
-        tmp = pickle.load(open("/research/rxtan/object-detection/models/Sound-of-Pixels/precomputed_features/audioset_text_category_order_rn50.pkl", "rb"))   
-        self.vid2cat = pickle.load(open("/research/rxtan/object-detection/models/Sound-of-Pixels/audioset_vid2cat.pkl", "rb"))
+        self.vid2cat = pickle.load(open("vid2cat.pkl", "rb"))
         self.cat2idx = {}
-        for idx, cat in enumerate(tmp):
-            self.cat2idx[cat] = idx
         
-        tmp = pickle.load(open('audioset_valid_videos.pkl', 'rb'))
+        valid_videos = pickle.load(open('valid_videos.pkl', 'rb'))
         
         self.video_list = []
         invalid = set()
@@ -59,46 +55,21 @@ class LatentCodeDataset():
         for cat in os.listdir(self.video_dir):
             cat_dir = os.path.join(self.video_dir, cat)
             cat_videos = os.listdir(cat_dir)
-            for curr_vid in cat_videos: 
-                '''if count % 100 == 0:
-                    print(count)
-                count += 1'''
-                    
+            for curr_vid in cat_videos:                    
                 curr_vid_name = curr_vid.split('.mp4')[0]
                 
                 if curr_vid_name not in self.vid2cat:
                     continue
                     
-                if curr_vid not in tmp:
+                if curr_vid not in valid_videos:
                     continue
                          
                 curr_vid_path = os.path.join(cat_dir, curr_vid)
                 
                 vid = curr_vid_path.split('/')[-1]
-                '''if len(os.listdir(curr_vid_path)) == 0:
-                    invalid.add(vid)
-                    continue'''
                 self.video_list.append(curr_vid_path)
                 
                 valid.add(vid)
-                
-        self.video_list = pickle.load(open("/research/rxtan/object-detection/models/Sound-of-Pixels/audioset_splits/split_5.pkl", "rb"))
-                
-        '''output_dir = "/research/rxtan/object-detection/models/Sound-of-Pixels/audioset_splits/"
-        num_splits = 6
-        split_size = 6000
-        for i in range(num_splits):
-            output_file = os.path.join(output_dir, 'split_%s.pkl' % i)
-            curr_start = i * split_size
-            curr_end = min((i+1)*split_size, len(self.video_list))
-            curr_split = self.video_list[curr_start:curr_end]
-            pickle.dump(curr_split, open(output_file, 'wb'))'''
-                
-        '''pickle.dump(self.video_list, open('audioset_valid_videos.pkl', 'wb'))
-        pickle.dump(invalid, open('audioset_invalid_videos.pkl', 'wb'))
-        print('invalid: ', len(invalid))
-        print(random.sample(invalid, 1)[0])
-        sys.exit()'''
         
     def get_tokens(self, text, context_length: int = 77, truncate: bool = True):        
         if isinstance(text, str):
@@ -166,21 +137,14 @@ class LatentCodeDataset():
                 
         return selected
         
-    def get_tokens(self, text, context_length: int = 77, truncate: bool = True):
-        '''encodings = self.tokenizer.encode_plus(text, add_special_tokens=True, truncation=True,
-                                               max_length=self.max_len, padding="max_length",
-                                               return_attention_mask=True, return_tensors="pt")
-        inputs = encodings['input_ids'].squeeze()
-        pad = torch.zeros((self.clip_max_len - len(inputs))).long()
-        inputs = torch.cat((inputs, pad))              
-        return inputs, encodings['attention_mask'].squeeze()'''
-        
+    def get_tokens(self, text, context_length: int = 77, truncate: bool = True):      
         if isinstance(text, str):
             texts = [text]
 
         sot_token = self._tokenizer.encoder["<|startoftext|>"]
+        prompt_token = self._tokenizer.encoder["a photo of a "]
         eot_token = self._tokenizer.encoder["<|endoftext|>"]
-        all_tokens = [[sot_token] + self._tokenizer.encode(text) + [eot_token] for text in texts]
+        all_tokens = [[sot_token] + [prompt_token] + self._tokenizer.encode(text) + [eot_token] for text in texts]
         result = torch.zeros(len(all_tokens), context_length, dtype=torch.long)
         
         for i, tokens in enumerate(all_tokens):
@@ -228,15 +192,6 @@ class LatentCodeDataset():
         placeholder_input_ids += self.placeholder_id
         final_placeholder_input_ids = torch.cat((first, placeholder_input_ids, second))
         final_placeholder_input_ids = final_placeholder_input_ids[:self.context_length]
-        
-        #input_ids = self.get_tokens(self.placeholder)
-        
-        # creates placeholder input_ids
-        '''placeholder_input_ids = torch.zeros(self.context_length, dtype=torch.long)
-        placeholder_input_ids[0] = self.start_token_id
-        for i in range(self.num_learnable_embeddings):
-            placeholder_input_ids[i+1] = self.placeholder_id
-        placeholder_input_ids[1+self.num_learnable_embeddings] = self.end_token_id'''
         
         ret_dict = {'text': final_placeholder_input_ids, 'frame': frame, 'video_name': video_name, 'cat_idx': cat_idx}
         
