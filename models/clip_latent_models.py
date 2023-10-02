@@ -465,7 +465,7 @@ def build_model(state_dict: dict):
     return model.eval()
     
 class LatentConceptEmbedding(nn.Module):
-    def __init__(self, bs, num_learnable_embeddings, num_text_classes=13, text_dim=1024, num_regions=49):
+    def __init__(self, bs, num_learnable_embeddings, num_text_classes=13, text_dim=1024, num_regions=49, gt_labels_path='music_person_playing_clip_rn50_text_category_features.npy'):
         super(LatentConceptEmbedding, self).__init__()
         
         self.latent_concept = torch.nn.Parameter(torch.randn(bs, num_learnable_embeddings, 512))
@@ -473,7 +473,8 @@ class LatentConceptEmbedding(nn.Module):
         self.latent_concept.requires_grad = True
         self.num_learnable_embeddings = num_learnable_embeddings
         self.num_regions = num_regions
-        
+
+        tmp = torch.from_numpy(np.load(gt_labels_path)).float()
         self.text_class_embeddings = nn.Embedding(tmp.size(0), tmp.size(1))
         
         self.text_class_embeddings.weight.data.copy_(tmp)
