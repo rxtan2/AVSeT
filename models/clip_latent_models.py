@@ -645,15 +645,5 @@ class ClipLatentModel(nn.Module):
         logit_scale = self.logit_scale.exp()
         scores = visual_features * text_features
         scores = scores.sum()
-        #scores *= logit_scale
         
         return scores
-        
-        print('tokens: ', tokens.shape)
-        print('tokens: ', tokens)
-        print('latent_concept: ', latent_concept.shape)
-        print('frame: ', frame.shape)
-        print('visual_features: ', visual_features.shape)
-        print('text_features: ', text_features.shape)
-        print('scores: ', scores)
-        sys.exit()
